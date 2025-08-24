@@ -297,28 +297,67 @@ function MediaCarousel({ urls, label = "Proof" }) {
   const items = normalizeToArray(urls);
   const [i, setI] = useState(0);
   const [open, setOpen] = useState(false);
+
   if (items.length === 0) return <PlaceholderMedia label={label} hint="Add public image links" />;
+
+  const id = extractDriveId(items[i]);
+  const primary = normalizeImageUrl(items[i]);
+  const thumb   = id ? driveThumbnailUrl(id) : null;
+
+  const [src, setSrc] = useState(primary);
+  const [triedThumb, setTriedThumb] = useState(false);
+  const [useIframe, setUseIframe] = useState(false);
+
+  // Reset fallbacks when the slide changes
+  React.useEffect(() => {
+    setSrc(primary);
+    setTriedThumb(false);
+    setUseIframe(false);
+  }, [i, primary]);
+
+  const onImgError = () => {
+    if (!triedThumb && thumb) {
+      setTriedThumb(true);
+      setSrc(thumb);               // fallback to Drive thumbnail
+    } else {
+      setUseIframe(true);          // final fallback to Drive preview iframe
+    }
+  };
+
   const go = (d) => setI((prev) => (prev + d + items.length) % items.length);
-  const src = normalizeImageUrl(items[i]);
+
   return (
     <div className="relative">
       {/* In-card preview: readable, no cropping */}
       <div className="mb-3 h-72 w-full overflow-hidden rounded-lg border border-white/10 bg-black/40 md:h-80">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={src}
-          alt={label}
-          loading="lazy"
-          decoding="async"
-          className="h-full w-full object-contain"
-          onClick={() => setOpen(true)}
-        />
+        {useIframe && id ? (
+          // Drive preview works for any file type, even if image hotlinking fails
+          // eslint-disable-next-line jsx-a11y/iframe-has-title
+          <iframe src={drivePreviewUrl(id)} className="h-full w-full" allow="autoplay; encrypted-media" />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={src}
+            alt={label}
+            loading="lazy"
+            decoding="async"
+            referrerPolicy="no-referrer"
+            className="h-full w-full object-contain"
+            onClick={() => setOpen(true)}
+            onError={onImgError}
+          />
+        )}
       </div>
+
       {/* Controls */}
       {items.length > 1 && (
         <>
-          <button onClick={() => go(-1)} className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/40 p-2 text-white hover:bg-black/60"><ChevronLeft className="h-4 w-4" /></button>
-          <button onClick={() => go(1)} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/40 p-2 text-white hover:bg-black/60"><ChevronRight className="h-4 w-4" /></button>
+          <button onClick={() => go(-1)} className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/40 p-2 text-white hover:bg-black/60">
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          <button onClick={() => go(1)} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-black/40 p-2 text-white hover:bg-black/60">
+            <ChevronRight className="h-4 w-4" />
+          </button>
           <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
             {items.map((_, idx) => (
               <span key={idx} onClick={() => setI(idx)} className={`h-1.5 w-4 cursor-pointer rounded-full ${idx === i ? 'bg-white' : 'bg-white/40'}`} />
@@ -326,6 +365,7 @@ function MediaCarousel({ urls, label = "Proof" }) {
           </div>
         </>
       )}
+
       {/* Lightbox modal */}
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
@@ -333,12 +373,21 @@ function MediaCarousel({ urls, label = "Proof" }) {
             <X className="h-5 w-5" />
           </button>
           <div className="relative w-full max-w-5xl">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={src} alt={label} className="max-h-[85vh] w-full rounded-lg object-contain" />
+            {useIframe && id ? (
+              // eslint-disable-next-line jsx-a11y/iframe-has-title
+              <iframe src={drivePreviewUrl(id)} className="h-[85vh] w-full rounded-lg" allow="autoplay; encrypted-media" />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={src} alt={label} className="max-h-[85vh] w-full rounded-lg object-contain" referrerPolicy="no-referrer" onError={onImgError} />
+            )}
             {items.length > 1 && (
               <>
-                <button onClick={() => go(-1)} className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full border border-white/30 bg-black/50 p-3 text-white"><ChevronLeft className="h-5 w-5" /></button>
-                <button onClick={() => go(1)} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-white/30 bg-black/50 p-3 text-white"><ChevronRight className="h-5 w-5" /></button>
+                <button onClick={() => go(-1)} className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full border border-white/30 bg-black/50 p-3 text-white">
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button onClick={() => go(1)} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-white/30 bg-black/50 p-3 text-white">
+                  <ChevronRight className="h-5 w-5" />
+                </button>
               </>
             )}
           </div>
@@ -347,6 +396,7 @@ function MediaCarousel({ urls, label = "Proof" }) {
     </div>
   );
 }
+
 // -------------------------------------
 
 function Results() {
