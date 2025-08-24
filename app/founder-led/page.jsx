@@ -46,15 +46,21 @@ const fadeUp = {
 };
 
 function extractDriveId(url) {
-  const m = url && url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
-  return m ? m[1] : null;
+  if (!url) return null;
+  const m1 = url.match(/drive\.google\.com\/file\/d\/([^/]+)/);
+  if (m1) return m1[1];
+  const m2 = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (m2) return m2[1];
+  return null;
 }
-function drivePreviewUrl(id) { return `https://drive.google.com/file/d/${id}/preview`; }
-function driveImageUrl(id) { return `https://drive.google.com/uc?export=view&id=${id}`; }
+function drivePreviewUrl(id)   { return `https://drive.google.com/file/d/${id}/preview`; }
+function driveImageUrl(id)     { return `https://drive.google.com/uc?export=view&id=${id}`; }
+function driveThumbnailUrl(id) { return `https://drive.google.com/thumbnail?id=${id}&sz=w1600`; }
+
 function normalizeImageUrl(url) {
   if (!url) return null;
   const id = extractDriveId(url);
-  if (id) return driveImageUrl(id);
+  if (id) return driveImageUrl(id);                // primary image
   if (url.includes("dropbox.com")) return url.replace("dl=0", "raw=1");
   return url;
 }
