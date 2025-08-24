@@ -12,16 +12,19 @@ import { ShieldCheck, Rocket, Video, PenSquare, Wand2, MessagesSquare, Send, Gau
 const MEDIA = {
   heroVslEmbedUrl: "",
 
-  standardRawVideo: "https://drive.google.com/file/d/1nHk5XzFNiopVEtZSasH5646FH5ZVKA7o/view?usp=drive_link",
-  standardEditedVideo: "https://drive.google.com/file/d/1Fkzw60qELi5a3rAS36RurpF5HqPw6jei/view?usp=drive_link",
-  premiumEditedVideo: "https://drive.google.com/file/d/1WNn5QX8rUXkC0A2QG9Ntc_cvs2f8yiBV/view?usp=sharing",
+  // keep your avatar sample videos as-is (Drive preview works for videos)
+  standardRawVideo: "https://drive.google.com/…",
+  standardEditedVideo: "https://drive.google.com/…",
+  premiumEditedVideo: "https://drive.google.com/…",
 
-  caseECL: "https://drive.google.com/file/d/1rYHvOVI4rzEmBmPTqdlu8F0gp3Rqf2Xx/view?usp=sharing,https://drive.google.com/file/d/1IaOfXtPAqZ7bMez8Wd-xLSoGD5PT806o/view?usp=sharing,https://drive.google.com/file/d/11ose4vqQxN6vd0wFHUiT1X3tw7xCYl9i/view?usp=sharing",
-  caseJanhvi: "https://drive.google.com/file/d/1kGkABQB8voOCcE2Q8aZaSPkBRH7392pr/view?usp=sharing,https://drive.google.com/file/d/13O2tWOxBGixzMuYYObxohglmJLhvG-IH/view?usp=sharing",
-  caseFulfillzy: "https://drive.google.com/file/d/1GetW1cY5pO1CUBCG7i1jQsclyGBhMZWP/view?usp=sharing",
-  caseSmash: "https://drive.google.com/file/d/1ITN0W4gc8GAiSyEcsVLC-gxoILlrjlMw/view?usp=drive_link,https://drive.google.com/file/d/1j29b8LG1mI173GqJVaejnf8pNDk-AOm7/view?usp=sharing",
+  // --- RESULTS: use local public paths (comma-separated for carousels) ---
+  caseECL: "/results/ecl/1.png,/results/ecl/2.png,/results/ecl/3.png",
+  caseJanhvi: "/results/janhvi/1.png,/results/janhvi/2.png",
+  caseFulfillzy: "/results/fulfillzy/1.png",
+  caseSmash: "/results/smash/1.png,/results/smash/2.png",
 
-  logoSrc: "https://drive.google.com/file/d/1KrIF5bOPgCJSlzvP7TQ8kQhY6kRnJ9GN/view?usp=drive_link",
+  // --- LOGO: local file ---
+  logoSrc: "/brand/logo.png",
 };
 
 const results = [
