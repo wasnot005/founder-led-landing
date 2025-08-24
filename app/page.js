@@ -131,7 +131,17 @@ function NavBar() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <div className="flex items-center gap-3">
           {MEDIA.logoSrc && !MEDIA.logoSrc.startsWith("#TODO") ? (
-            <img src={normalizeImageUrl(MEDIA.logoSrc)} alt="Logo" className="h-8 w-8 rounded-lg object-cover" />
+            <img
+  src={normalizeImageUrl(MEDIA.logoSrc)}
+  alt="Logo"
+  className="h-8 w-8 rounded-lg object-cover"
+  referrerPolicy="no-referrer"
+  onError={(e) => {
+    const id = extractDriveId(MEDIA.logoSrc);
+    if (id) e.currentTarget.src = driveThumbnailUrl(id);
+  }}
+/>
+
           ) : (
             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-cyan-400 to-indigo-500 opacity-90" />
           )}
