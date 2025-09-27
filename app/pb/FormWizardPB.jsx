@@ -13,15 +13,40 @@ const initialAnswers = {
 };
 
 const stepConfig = [
-  { key: "name", label: "Your name", type: "text", placeholder: "e.g., Suresh Malani" },
-  { key: "email", label: "Work email", type: "email", placeholder: "you@company.com" },
-  { key: "phone", label: "Phone / WhatsApp (with country code)", type: "text", placeholder: "+91 98xxxxxxx" },
-  { key: "instagramUrl", label: "Main Instagram profile", type: "text", placeholder: "@yourhandle or profile URL" },
+  {
+    key: "name",
+    label: "What's your name?",
+    helper: "We love knowing who we're speaking with.",
+    type: "text",
+    placeholder: "e.g., Suresh Malani",
+  },
+  {
+    key: "email",
+    label: "Work email",
+    helper: "We'll share your personalised content roadmap here.",
+    type: "email",
+    placeholder: "you@company.com",
+  },
+  {
+    key: "phone",
+    label: "Phone / WhatsApp",
+    helper: "Include your country code so we can reach you easily.",
+    type: "text",
+    placeholder: "+91 98xxxxxxx",
+  },
+  {
+    key: "instagramUrl",
+    label: "Main Instagram profile",
+    helper: "Drop your @handle or a link—we'll review it before the call.",
+    type: "text",
+    placeholder: "@yourhandle or profile URL",
+  },
   {
     key: "investment",
     label: "Monthly investment you can commit",
+    helper: "Choose the tier that reflects your growth budget right now.",
     type: "radio",
-    options: ["< $500", "$500 to $1000", "$1000 to $5000", "> $5000"],
+    options: ["Under $500", "$500 – $1,000", "$1,000 – $5,000", "$5,000+"],
   },
 ];
 
@@ -103,21 +128,26 @@ export default function FormWizardPB({ onClose, onQualified }) {
     setSaving(true);
     setError(null);
 
-    const tier =
-      answers.investment === "< $500"
-        ? "none"
-        : answers.investment === "$500 to $1000"
-          ? "basic"
-          : "full";
+    const tierMap = {
+      "Under $500": "none",
+      "$500 – $1,000": "basic",
+      "$1,000 – $5,000": "full",
+      "$5,000+": "full",
+    };
+    const tier = tierMap[answers.investment] ?? "none";
 
     try {
+      if (!supabase || typeof supabase.from !== "function") {
+        throw new Error("Supabase client is not configured");
+      }
+
       const { error: insertError } = await supabase
         .from("submissions")
         .insert({
           name: answers.name,
           email: answers.email,
           phone: answers.phone,
-          instagramurl: answers.instagramUrl,
+          instagram_url: answers.instagramUrl,
           investment: answers.investment,
         });
 
@@ -162,11 +192,13 @@ export default function FormWizardPB({ onClose, onQualified }) {
           {currentStep.options.map((option) => (
             <label
               key={option}
-              className={`group flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-base text-white/80 backdrop-blur transition ${
-                answers[currentStep.key] === option ? "border-indigo-400/60 bg-indigo-400/10 text-white" : "hover:border-white/30"
+              className={`group flex items-center justify-between rounded-2xl border px-4 py-3 text-base backdrop-blur transition ${
+                answers[currentStep.key] === option
+                  ? "border-indigo-400/70 bg-indigo-500/15 text-white"
+                  : "border-white/10 bg-white/5 text-white/85 hover:border-indigo-300/40"
               }`}
             >
-              <span>{option}</span>
+              <span className="font-medium">{option}</span>
               <input
                 type="radio"
                 name={currentStep.key}
@@ -184,7 +216,7 @@ export default function FormWizardPB({ onClose, onQualified }) {
       <input
         ref={inputRef}
         autoFocus
-        className="mt-6 w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base text-white outline-none backdrop-blur transition focus:border-indigo-400 focus:bg-white/10"
+        className="mt-6 w-full rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base text-white outline-none backdrop-blur transition focus:border-indigo-300 focus:bg-white/10"
         type={currentStep.type}
         placeholder={currentStep.placeholder}
         value={answers[currentStep.key]}
@@ -213,7 +245,7 @@ export default function FormWizardPB({ onClose, onQualified }) {
                 rel="noopener noreferrer"
                 className="pb-result-cta"
               >
-                Book a Call on Calendly
+                Apply now
               </a>
             )}
             {state.secondary && (
@@ -245,6 +277,7 @@ export default function FormWizardPB({ onClose, onQualified }) {
       >
         <div className="pb-step">Step {step + 1} of {totalSteps}</div>
         <h3 className="pb-question">{currentStep.label}</h3>
+        {currentStep.helper ? <p className="pb-helper">{currentStep.helper}</p> : null}
         {renderField()}
 
         <div className="pb-actions">

@@ -90,6 +90,14 @@
   font-weight: 700;
 }
 
+.pb-helper {
+  margin-top: 0.75rem;
+  max-width: 30rem;
+  font-size: 1rem;
+  color: rgba(203, 213, 225, 0.8);
+  line-height: 1.6;
+}
+
 .pb-actions {
   margin-top: 2.5rem;
   display: flex;

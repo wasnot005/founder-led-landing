@@ -226,7 +226,7 @@ function Hero({ onAuditClick }) {
               onClick={onAuditClick}
               className="inline-flex flex-col items-center gap-1 rounded-full bg-white px-6 py-4 text-base font-semibold text-[#0a0f1a] transition hover:bg-white/90"
             >
-              <span>Book a 10-minute Audit</span>
+              <span>Apply now</span>
               <span className="text-sm font-medium text-[#0a0f1a]/70">→ We’ll set your custom reach target</span>
             </button>
             <p className="text-xs font-medium uppercase tracking-wide text-emerald-200/80">
@@ -475,7 +475,7 @@ function AuditCTA({ onAuditClick, qualifiedLead }) {
             onClick={onAuditClick}
             className="inline-flex flex-col items-center gap-1 rounded-full bg-white px-6 py-4 text-base font-semibold text-[#0a0f1a] transition hover:bg-white/90"
           >
-            <span>Book a 10-minute Audit</span>
+            <span>Apply now</span>
             <span className="text-sm font-medium text-[#0a0f1a]/70">→ We’ll set your custom reach target</span>
           </button>
           <span className="text-xs font-medium uppercase tracking-wide text-emerald-200/80">
