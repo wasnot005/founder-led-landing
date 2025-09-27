@@ -1,0 +1,21 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+pnpm-lock.yaml
+
+# Next.js
+.next/
+out/
+
+# Editor
+.vscode/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# macOS
+.DS_Store

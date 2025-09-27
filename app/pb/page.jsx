@@ -6,7 +6,7 @@ import {
   GaugeCircle, Workflow, Infinity, Users, Sparkles, LineChart, Bot,
   Film, Globe2, Lock, ChevronLeft, ChevronRight, X
 } from "lucide-react";
-import FormWizard from "./FormWizard";
+import FormWizardPB from "./FormWizardPB";
 
 /**
  * Founder-Led Personal Brand — Private Landing Page
@@ -564,7 +564,7 @@ function BGOrbs(){
 }
 
 // -------------------- Page export --------------------
-export default function LandingPage() {
+export default function PBPage() {
   const [showWizard, setShowWizard] = useState(false);
   const [qualifiedLead, setQualifiedLead] = useState(null);
 
@@ -575,8 +575,8 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0f1a] text-white">
-      {showWizard && <FormWizard onClose={closeWizard} onQualified={handleQualified} />}
+    <div className="min-h-screen bg-[#050b24] text-white">
+      {showWizard && <FormWizardPB onClose={closeWizard} onQualified={handleQualified} />}
       <SiteStyles />
       <BGOrbs />
       <NavBar />
