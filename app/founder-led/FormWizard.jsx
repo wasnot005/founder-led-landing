@@ -12,15 +12,40 @@ const initialAnswers = {
 };
 
 const stepConfig = [
-  { key: "name", label: "Your name", type: "text", placeholder: "e.g., Suresh Malani" },
-  { key: "email", label: "Work email", type: "email", placeholder: "you@company.com" },
-  { key: "phone", label: "Phone / WhatsApp (with country code)", type: "text", placeholder: "+91 98xxxxxxx" },
-  { key: "instagramUrl", label: "Main Instagram profile", type: "text", placeholder: "@yourhandle or profile URL" },
+  {
+    key: "name",
+    label: "What's your name?",
+    helper: "We'll use it so our team knows who to reach out to.",
+    type: "text",
+    placeholder: "e.g., Suresh Malani",
+  },
+  {
+    key: "email",
+    label: "Work email",
+    helper: "This is where we'll send your tailored growth plan.",
+    type: "email",
+    placeholder: "you@company.com",
+  },
+  {
+    key: "phone",
+    label: "Phone / WhatsApp",
+    helper: "Include your country code so we can connect without delays.",
+    type: "text",
+    placeholder: "+91 98xxxxxxx",
+  },
+  {
+    key: "instagramUrl",
+    label: "Main Instagram profile",
+    helper: "Share your handle or a link so we can review your content.",
+    type: "text",
+    placeholder: "@yourhandle or profile URL",
+  },
   {
     key: "investment",
     label: "Monthly investment you can commit",
+    helper: "Pick the range that best reflects your current budget.",
     type: "radio",
-    options: ["< $500", "$500 - $1000", "$1000 - $5000", "> $5000"],
+    options: ["Under $500", "$500 – $1,000", "$1,000 – $5,000", "$5,000+"],
   },
 ];
 
@@ -99,12 +124,13 @@ export default function FormWizard({ onClose, onQualified }) {
     setSaving(true);
     setError(null);
 
-    const tier =
-      answers.investment === "< $500"
-        ? "none"
-        : answers.investment === "$500 to $1000"
-          ? "basic"
-          : "full";
+    const tierMap = {
+      "Under $500": "none",
+      "$500 – $1,000": "basic",
+      "$1,000 – $5,000": "full",
+      "$5,000+": "full",
+    };
+    const tier = tierMap[answers.investment] ?? "none";
 
     try {
       if (!supabase || typeof supabase.from !== "function") {
@@ -155,7 +181,15 @@ export default function FormWizard({ onClose, onQualified }) {
       return (
         <div className="mt-6 space-y-3">
           {currentStep.options.map((option) => (
-            <label key={option} className="flex cursor-pointer items-center gap-3 rounded-2xl px-4 py-3">
+            <label
+              key={option}
+              className={`flex cursor-pointer items-center justify-between rounded-2xl border px-4 py-3 transition ${
+                answers[currentStep.key] === option
+                  ? "border-indigo-400/70 bg-indigo-500/15 text-white"
+                  : "border-white/10 bg-white/5 text-slate-200 hover:border-indigo-400/40"
+              }`}
+            >
+              <span className="text-base font-medium">{option}</span>
               <input
                 type="radio"
                 name={currentStep.key}
@@ -163,7 +197,6 @@ export default function FormWizard({ onClose, onQualified }) {
                 onChange={() => updateAnswer(currentStep.key, option)}
                 className="h-4 w-4 accent-indigo-500"
               />
-              <span className="text-lg">{option}</span>
             </label>
           ))}
         </div>
@@ -208,7 +241,7 @@ export default function FormWizard({ onClose, onQualified }) {
                 rel="noopener noreferrer"
                 className="inline-block bg-emerald-500 text-slate-950 font-bold py-3 px-8 rounded-lg text-lg hover:bg-emerald-400 transition-shadow shadow-[0_0_25px_rgba(16,185,129,0.3)] uppercase"
               >
-                BOOK a call
+                Apply now
               </a>
             )}
             {copy.showReset && (
@@ -237,7 +270,10 @@ export default function FormWizard({ onClose, onQualified }) {
         <div className="mb-2 text-sm text-slate-400">
           Step {step + 1} of {totalSteps}
         </div>
-        <h3 className="text-2xl font-semibold text-slate-100">{currentStep.label}</h3>
+        <h3 className="text-3xl font-semibold text-white">{currentStep.label}</h3>
+        {currentStep.helper ? (
+          <p className="mt-2 max-w-xl text-base text-slate-300/80">{currentStep.helper}</p>
+        ) : null}
         {renderField()}
 
         <div className="mt-8 flex items-center justify-between text-sm text-slate-300">
